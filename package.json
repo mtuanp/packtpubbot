@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "request": "^2.72.0",
-    "cheerio": "^0.20.0"
+    "cheerio": "^0.20.0",
+    "pushbullet": "^1.4.3"
   },
   "engines": {
     "node": "6.0.0"
@@ -27,5 +28,5 @@
   "contributors": [
     "Tuan Pham"
   ],
-  "license": "MIT"
+  "license": "CC-BY-4.0"
 }

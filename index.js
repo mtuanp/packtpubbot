@@ -3,31 +3,39 @@ var request = require('request').defaults({
     jar: true // enable cookie support, default is false
 });
 var cheerio = require('cheerio');
+var PushBullet = require('pushbullet');
 
 var packtpubBaseUrl = 'https://www.packtpub.com'
 var packtpubFreeEbookUrl = packtpubBaseUrl + '/packt/offers/free-learning';
 var userLoginForm;
 var freeEbookUrl;
+var freeEbookTitle;
 var formData = {
-	      email: config.packtpub.email,
-	      password: config.packtpub.password,
-	      op: 'Login',
-	      form_build_id: '',
-	      form_id: ''
-	    };
+    email: config.packtpub.email,
+    password: config.packtpub.password,
+    op: 'Login',
+    form_build_id: '',
+    form_id: ''
+};
+var pusher = new PushBullet(config.pushbullet.apiKey);
 
-request(packtpubFreeEbookUrl, function (error, response, body) {
-  if (!error && response.statusCode == 200) {
-    $ = cheerio.load(body);
-    userLoginForm = $('#packt-user-login-form');
-    formData.form_build_id = userLoginForm.find('[name="form_build_id"]').val();
-    formData.form_id = userLoginForm.find('[name="form_id"]').val();
-    freeEbookUrl = packtpubBaseUrl + $('a.twelve-days-claim').attr("href");
-    console.log(freeEbookUrl);
-    request.post({url: packtpubFreeEbookUrl, formData: formData}, function (error, response, body) {
-      request(freeEbookUrl, function (error, response, body) {
-    	  console.log("DONE...");
-      });
-    });
-  }
+request(packtpubFreeEbookUrl, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+        $ = cheerio.load(body);
+        userLoginForm = $('#packt-user-login-form');
+        formData.form_build_id = userLoginForm.find('[name="form_build_id"]').val();
+        formData.form_id = userLoginForm.find('[name="form_id"]').val();
+        freeEbookUrl = packtpubBaseUrl + $('a.twelve-days-claim').attr("href");
+        freeEbookTitle = $('.dotd-title').find('h2').text().trim();
+        console.log("Claim Title: " + freeEbookTitle);
+        request.post({
+            url: packtpubFreeEbookUrl,
+            formData: formData
+        }, function(error, response, body) {
+            request(freeEbookUrl, function(error, response, body) {
+                pusher.note('', 'packtpub claim bot', "Sir, I've just claimed " + freeEbookTitle + " for you.", function(error, response) {});
+                console.log("DONE...");
+            });
+        });
+    }
 })

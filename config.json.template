@@ -1,6 +1,10 @@
 {
-    "packtpub" : {
-    	"email" : "",
-    	"password" : ""
-    }
+  "packtpub": {
+    "email": "",
+    "password": ""
+  },
+  "pushbullet": {
+    "enable": true,
+    "apiKey": ""
+  }
 }
