@@ -9,7 +9,8 @@
   "dependencies": {
     "request": "^2.72.0",
     "cheerio": "^0.20.0",
-    "pushbullet": "^1.4.3"
+    "pushbullet": "^1.4.3",
+    "node-cron": "^1.1.1"
   },
   "engines": {
     "node": "6.0.0"
