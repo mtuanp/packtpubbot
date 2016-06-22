@@ -1,0 +1,32 @@
+{
+  "name": "packt-claimer",
+  "version": "0.1.0",
+  "description": "A bot for claim daily free learning ebooks from packtpub.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "request": "^2.72.0",
+    "cheerio": "^0.20.0",
+    "pushbullet": "^1.4.3"
+  },
+  "engines": {
+    "node": "6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mtuanp/packtpubbot.git"
+  },
+  "keywords": [
+    "node",
+    "bot",
+    "packtpub",
+    "free ebooks"
+  ],
+  "author": "Tuan Pham",
+  "contributors": [
+    "Tuan Pham"
+  ],
+  "license": "LGPL-3.0"
+}
