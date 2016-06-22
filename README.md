@@ -43,5 +43,5 @@ crontab -e
 ```
 Add following statements for every day cron job at 9 am:
 ```bash
-0 9 * * * <PATH_TO_NODE> <PATH_TO_REPO>/index.js >> /tmp/packtpub.log 2>&1
+0 9 * * * <PATH_TO_NODE> <PATH_TO_REPO>/index.js >> /var/log/packtpub.log 2>&1
 ```
