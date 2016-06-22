@@ -6,6 +6,5 @@
   "pushbullet": {
     "enable": true,
     "apiKey": ""
-  },
-  "cron": "0 9 * * *"
+  }
 }
