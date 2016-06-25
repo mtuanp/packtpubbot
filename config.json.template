@@ -1,9 +1,19 @@
 {
+  /* Choose 'telegram' or 'pushbullet' according to your favorite way of get informed */
+  "informBy": "",
+
   "packtpub": {
     "email": "",
     "password": ""
   },
+  
   "pushbullet": {
     "apiKey": ""
+  },
+
+  /* to use telegram, you have to create a bot first. See: https://core.telegram.org/bots#3-how-do-i-create-a-bot */
+  "telegram": {
+    "botToken" : "",
+    "receiverId" : ""
   }
 }

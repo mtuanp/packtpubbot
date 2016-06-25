@@ -45,14 +45,14 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
                 request(freeEbookUrl, function(error, response, body) {
                     if (error) {
                         console.error('claim error', error);
-                        pusher.note('', 'packtpub claim bot error', "Got a error please check this!", function(error, response) {
+                        inform('packtpub claim bot error', "Got a error please check this!", function(error, response) {
                             if (error) {
                                 console.error('pushbullet failure', error);
                             }
                         });
                     }
                     if (!error && response.statusCode == 200) {
-                        pusher.note('', 'packtpub claim bot', "Sir, I've just claimed " + freeEbookTitle + " for you.", function(error, response) {
+                        inform('packtpub claim bot', "Sir, I've just claimed " + freeEbookTitle + " for you.", function(error, response) {
                             if (error) {
                                 console.error('pushbullet failure', error);
                             }
@@ -66,3 +66,25 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
         });
     }
 })
+
+function inform(name, content, handler){
+  if(config.informBy=="telegram"){
+    informTelegram(content, config.telegram.receiverId, config.telegram.botToken);
+  } else if(config.informBy=="pushbullet"){
+    informPusher(name, content, handler);
+  } else {
+    console.log(content);
+  }
+}
+
+function informPusher(name, content, handler){
+  pusher.note('', name, content, handler);
+}
+
+function informTelegram(content, receiver, token) {
+  var TelegramBot = require('node-telegram-bot-api');
+  // just send the message
+  var bot = new TelegramBot(token, {polling: true});
+
+  bot.sendMessage(receiver, content);
+}
