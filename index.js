@@ -1,17 +1,22 @@
 'use strict';
 
-var config = require('./config.json');
-var request = require('request').defaults({
+const config = require('./config.json');
+const request = require('request').defaults({
     jar: true // enable cookie support, default is false
 });
-var cheerio = require('cheerio');
-var PushBullet = require('pushbullet');
+const path = require('path');
+const fs = require("fs");
+const cheerio = require('cheerio');
+const PushBullet = require('pushbullet');
 
-var packtpubBaseUrl = 'https://www.packtpub.com'
+var packtpubBaseUrl = 'https://www.packtpub.com';
+var packtpubDownloadEbookUrl = packtpubBaseUrl + "/ebook_download/{ebook_id}/pdf";
 var packtpubFreeEbookUrl = packtpubBaseUrl + '/packt/offers/free-learning';
 var pusher = new PushBullet(config.pushbullet.apiKey);
 var userLoginForm;
 var freeEbookUrl;
+var ebookId;
+var downloadUrl;
 var freeEbookTitle;
 var formData = {
     email: config.packtpub.email,
@@ -30,7 +35,10 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
         userLoginForm = $('#packt-user-login-form');
         formData.form_build_id = userLoginForm.find('[name="form_build_id"]').val();
         formData.form_id = userLoginForm.find('[name="form_id"]').val();
-        freeEbookUrl = packtpubBaseUrl + $('a.twelve-days-claim').attr("href");
+        var relativeLink = $('a.twelve-days-claim').attr("href");
+        freeEbookUrl = packtpubBaseUrl + relativeLink;
+        ebookId =  relativeLink.replace(/\/freelearning-claim\/([0-9]*)\/[0-9]*/g, "$1")
+        downloadUrl = packtpubDownloadEbookUrl.replace("{ebook_id}", ebookId);
         console.log("Free Ebook Url: " + freeEbookUrl);
         freeEbookTitle = $('.dotd-title').find('h2').text().trim();
         console.log("Claim Title: " + freeEbookTitle);
@@ -52,6 +60,15 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
                         });
                     }
                     if (!error && response.statusCode == 200) {
+                        if(config.downloadAfterClaim){
+                            request({
+                                    followAllRedirects: true,
+                                    url: downloadUrl
+                            }).pipe(
+                                fs.createWriteStream(
+                                    (config.outputDirectory != null? (config.outputDirectory + path.sep) : '')  + freeEbookTitle + "." + config.dowloadFormat
+                                ));
+                        }
                         inform('packtpub claim bot', "Sir, I've just claimed " + freeEbookTitle + " for you.", function(error, response) {
                             if (error) {
                                 console.error('pushbullet failure', error);
@@ -59,13 +76,13 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
                         });
                         console.log("----- Done... -----");
                     }
-                });
+                }).end();
             } else {
               console.error('auth failure', error);
             }
         });
     }
-})
+});
 
 function inform(name, content, handler){
   if(config.informBy=="telegram"){
@@ -84,7 +101,6 @@ function informPusher(name, content, handler){
 function informTelegram(content, receiver, token) {
   var TelegramBot = require('node-telegram-bot-api');
   // just send the message
-  var bot = new TelegramBot(token, {polling: true});
-
+  var bot = new TelegramBot(token);
   bot.sendMessage(receiver, content);
 }

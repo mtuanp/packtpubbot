@@ -1,7 +1,14 @@
 {
   /* Choose 'telegram' or 'pushbullet' according to your favorite way of get informed */
   "informBy": "",
-
+  /* Determines if you want do download the ebook after claim*/
+  "downloadAfterClaim": true,  
+  /* 
+    Determines where you want do download the ebook after claim
+    If this config is null, the file will be download at same directory as index.js
+  */
+  "outputDirectory": null,
+  "dowloadFormat": "pdf", 
   "packtpub": {
     "email": "",
     "password": ""

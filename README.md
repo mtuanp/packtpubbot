@@ -16,15 +16,64 @@ The bot uses a json configuration file for providing login credentials. Add file
 
 ```json
 {
+  "informBy": "",
+  "downloadAfterClaim": true,
+  "outputDirectory": null,
   "packtpub": {
     "email": "put your email here",
     "password": "put your password here"
   },
   "pushbullet": {
     "apiKey": "put your pushbullet api key here"
+  },
+    "telegram": {
+    "botToken" : "put your telegram bot token here",
+    "receiverId" : "put destination user id here"
   }
 }
 ```
+### informBy
+Configure the desired notification platform, if leaves it blank will be output to console.
+**Aceptable values:**
+- telegram
+- pushbullet
+
+### downloadAfterClaim
+Configure to download the ebook after claim.
+**Default value:** *true*
+**Aceptable values:**
+- true
+- false
+
+### outputDirectory
+Configure the desired directory to output the ebook. 
+*The ebook will be download at the same directory as the index.js if leaves this null*
+**Default value:** *null*
+
+### outputFormat
+Configure the desired format to download the ebook.
+**Default value:** *pdf*
+**Aceptable values:**
+- pdf
+- epub
+- mobi
+
+### packtpub
+#### email
+email to login into https://www.packtpub.com
+#### password
+password to login into https://www.packtpub.com
+
+### pushbullet
+#### apiKey
+apiKey provided by https://www.pushbullet.com
+
+### telegram
+#### botToken
+the bot token provided by botFather
+#### receiverId
+the telegram user id to receive the notification
+
 ## How to use
 
 After set up your config.json, you start the bot with following statements:
