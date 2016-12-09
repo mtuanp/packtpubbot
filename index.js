@@ -76,7 +76,7 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
                         });
                         console.log("----- Done... -----");
                     }
-                }).end();
+                });
             } else {
               console.error('auth failure', error);
             }
