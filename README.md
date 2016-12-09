@@ -7,7 +7,7 @@ A bot for claim daily free learning ebooks from packtpub. It also notify you ove
 
 ## How to install
 ```bash
-git clone https://github.com/mtuanp/packtpubbot.git
+git clone https://github.com/maikemota/packtpubbot.git
 ```
 
 ## Configuration
