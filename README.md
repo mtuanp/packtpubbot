@@ -1,13 +1,13 @@
 # packtpubbot
 
-A bot for claim daily free learning ebooks from packtpub. It also notify you over [Pushbullet](https://www.pushbullet.com/). It's designed as cron job task on a [Raspberry Pi](https://www.raspberrypi.org/).
+A bot for claim daily free learning ebooks from packtpub. It also notify you over [Pushbullet](https://www.pushbullet.com/) or [Telegram](https://telegram.org/). It can download the ebook after claim if you want. It's designed as cron job task on a [Raspberry Pi](https://www.raspberrypi.org/).
 
 ## Requirements
 * [node.js](https://nodejs.org), version 6.0.0+ (only tested on v6)
 
 ## How to install
 ```bash
-git clone https://github.com/maikemota/packtpubbot.git
+git clone https://github.com/mtuanp/packtpubbot.git
 ```
 
 ## Configuration
@@ -46,7 +46,7 @@ Configure to download the ebook after claim.
 - false
 
 ### outputDirectory
-Configure the desired directory to output the ebook. 
+Configure the desired directory to output the ebook.
 *The ebook will be download at the same directory as the index.js if leaves this null*
 **Default value:** *null*
 
