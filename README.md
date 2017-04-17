@@ -58,6 +58,10 @@ Configure the desired format to download the ebook.
 - epub
 - mobi
 
+By seprating with ';', multiple file-formats can be downloaded. Example for downloading pdf and epub:
+
+- pdf;epub
+
 ### packtpub
 #### email
 email to login into https://www.packtpub.com
