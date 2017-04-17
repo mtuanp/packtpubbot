@@ -10,12 +10,13 @@ const cheerio = require('cheerio');
 const PushBullet = require('pushbullet');
 
 var packtpubBaseUrl = 'https://www.packtpub.com';
-var packtpubDownloadEbookUrl = packtpubBaseUrl + "/ebook_download/{ebook_id}/pdf";
+var packtpubDownloadEbookUrl = packtpubBaseUrl + "/ebook_download/{ebook_id}/{downloadFormat}";
 var packtpubFreeEbookUrl = packtpubBaseUrl + '/packt/offers/free-learning';
 var pusher = new PushBullet(config.pushbullet.apiKey);
 var userLoginForm;
 var freeEbookUrl;
 var ebookId;
+var baseDownloadUrl;
 var downloadUrl;
 var freeEbookTitle;
 var formData = {
@@ -25,6 +26,7 @@ var formData = {
     form_build_id: '',
     form_id: ''
 };
+var downloadFormates = config.dowloadFormat.split(";");
 console.log("----- Start claim free ebook from packtpub -----");
 request(packtpubFreeEbookUrl, function(error, response, body) {
     if (error) {
@@ -37,8 +39,8 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
         formData.form_id = userLoginForm.find('[name="form_id"]').val();
         var relativeLink = $('a.twelve-days-claim').attr("href");
         freeEbookUrl = packtpubBaseUrl + relativeLink;
-        ebookId =  relativeLink.replace(/\/freelearning-claim\/([0-9]*)\/[0-9]*/g, "$1")
-        downloadUrl = packtpubDownloadEbookUrl.replace("{ebook_id}", ebookId);
+        ebookId = relativeLink.replace(/\/freelearning-claim\/([0-9]*)\/[0-9]*/g, "$1")
+        baseDownloadUrl = packtpubDownloadEbookUrl.replace("{ebook_id}", ebookId);
         console.log("Free Ebook Url: " + freeEbookUrl);
         freeEbookTitle = $('.dotd-title').find('h2').text().trim();
         console.log("Claim Title: " + freeEbookTitle);
@@ -60,14 +62,17 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
                         });
                     }
                     if (!error && response.statusCode == 200) {
-                        if(config.downloadAfterClaim){
-                            request({
+                        if (config.downloadAfterClaim) {
+                            downloadFormates.forEach(function(dowloadFormat) {
+                                downloadUrl = baseDownloadUrl.replace("{downloadFormat}", dowloadFormat);
+                                request({
                                     followAllRedirects: true,
                                     url: downloadUrl
-                            }).pipe(
-                                fs.createWriteStream(
-                                    (config.outputDirectory != null? (config.outputDirectory + path.sep) : '')  + freeEbookTitle + "." + config.dowloadFormat
-                                ));
+                                }).pipe(
+                                    fs.createWriteStream(
+                                        (config.outputDirectory != null ? (config.outputDirectory + path.sep) : '') + freeEbookTitle + "." + dowloadFormat
+                                    ));
+                            });
                         }
                         inform('packtpub claim bot', "Sir, I've just claimed " + freeEbookTitle + " for you.", function(error, response) {
                             if (error) {
@@ -78,29 +83,29 @@ request(packtpubFreeEbookUrl, function(error, response, body) {
                     }
                 });
             } else {
-              console.error('auth failure', error);
+                console.error('auth failure', error);
             }
         });
     }
 });
 
-function inform(name, content, handler){
-  if(config.informBy=="telegram"){
-    informTelegram(content, config.telegram.receiverId, config.telegram.botToken);
-  } else if(config.informBy=="pushbullet"){
-    informPusher(name, content, handler);
-  } else {
-    console.log(content);
-  }
+function inform(name, content, handler) {
+    if (config.informBy == "telegram") {
+        informTelegram(content, config.telegram.receiverId, config.telegram.botToken);
+    } else if (config.informBy == "pushbullet") {
+        informPusher(name, content, handler);
+    } else {
+        console.log(content);
+    }
 }
 
-function informPusher(name, content, handler){
-  pusher.note('', name, content, handler);
+function informPusher(name, content, handler) {
+    pusher.note('', name, content, handler);
 }
 
 function informTelegram(content, receiver, token) {
-  var TelegramBot = require('node-telegram-bot-api');
-  // just send the message
-  var bot = new TelegramBot(token);
-  bot.sendMessage(receiver, content);
+    var TelegramBot = require('node-telegram-bot-api');
+    // just send the message
+    var bot = new TelegramBot(token);
+    bot.sendMessage(receiver, content);
 }
